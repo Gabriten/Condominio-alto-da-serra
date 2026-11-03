@@ -13,27 +13,59 @@
 
 #  == Cadastro de Morador ==
 #dados da unidade e morador
+
 unidades = {}
-#    Cadastro de nova unidade
+
+    #Cadastro de nova unidade
+
 def cad_uni():
     numAp = input("Número do apartamento: ")
-
-    if numAp in unidades:
+    bloc = input("Bloco do apartamento(ex.: A,B,C...): ")
+    if numAp and bloc in unidades:
         print("Essa unidade já está cadastrada!")
         return
+    nome_resp = input("Nome do responsável pelo imóvel: ")
+    
+    cpf = int(input("CPF (Apenas números) do responsável pelo imóvel: "))
+    if cpf in unidades:
+        print("Esse CPF já foi anexado à uma unidade!")
+        return
+    
+    sexo = int(input("Sexo do responsável(1 - Feminino, 2 - Para masculino): "))
+    
+    idade = int(input("Idade do responsável: "))
+    
+    print("Tipos de Apartamento:\n1- Standart\n2- Luxo\n3- Duplex\n4- Cobertura")
+    tipoAp = int(input("Insira seu tipo do apartamento: "))
+    
+    vagas_extras = int(input("Número de vagas extras de garagem: "))
+    
+    pet = int(input("Possui pet (1 - Sim, 0 - Não): "))
+    
+    sindico = int(input("Exerce a função de Síndico (1 - Sim, 0 - Não): "))
 
-    print("Tipos de Apartamento:\n1- Standart\n2- Luxo\n3- Duplex\n 4- Cobertura")
-    tipoAp = input("Insira seu tipo do apartamento: ")
-#    bloco
-#    nome do resp
-#    cpf
-#    sexo
-#    idade
-#    tipo de unidade
-#    vagas de garag extras
-#    pet
-#    sindico
-#    data de venc
+    venc_taxa = int(input("Data de vencimento da taxa Condominial (Somente o dia): "))
+
+    # Armazenamento dos dados da unidade
+
+    unidades[numAp,bloc] = {
+        "numero_apartamento": numAp,
+        "bloco": bloc,
+        "nome_responsavel": nome_resp,
+        "cpf": cpf,
+        "sexo": sexo,
+        "idade": idade,
+        "tipo_unidade": tipoAp,
+        "vagas_extras": vagas_extras,
+        "possui_pet": pet,
+        "sindico": sindico,
+        "dia_vencimento": venc_taxa
+    }
+
+    print("Unidade cadastrada com sucesso!")
+
+cad_uni()
+print(unidades)
 
 #Tabela de Taxa Base Condominial e Vagas Extras
 #    standart
