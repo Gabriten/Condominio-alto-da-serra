@@ -21,10 +21,15 @@ unidades = {}
 def cad_uni():
     numAp = input("Número do apartamento: ")
     bloc = input("Bloco do apartamento(ex.: A,B,C...): ")
-    if numAp and bloc in unidades:
-        print("Essa unidade já está cadastrada!")
-        return
-    nome_resp = input("Nome do responsável pelo imóvel: ")
+    while numAp and bloc in unidades:
+      print("Essa unidade já está cadastrada!")
+      numAp = input("Número do apartamento: ")
+      bloc = input("Bloco do apartamento(ex.: A,B,C...): ")
+        
+    nome = input("Nome do responsável pelo imóvel: ")
+    while any(caractere.isdigit() for caractere in nome):
+      print("Nome inválido! Por favor não insira números.")
+      nome = input("Digite seu nome novamente: ")
     
     cpf = int(input("CPF (Apenas números) do responsável pelo imóvel: "))
     if cpf in unidades:
