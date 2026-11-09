@@ -222,7 +222,7 @@ def exibir_menu():
     print("3 - Remover Unidade")
     print("4 - Listagem Geral de Unidades")
     print("5 - Listagem por Tipo de Imóvel")
-    print("6 - Re latório Estatístico do Condomínio")
+    print("6 - Relatório Estatístico do Condomínio")
     print("0 - Sair")
     print("-" * 88)
 
