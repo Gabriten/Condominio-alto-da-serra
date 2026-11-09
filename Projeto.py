@@ -1,3 +1,4 @@
+import time
 #  == Cadastro de Morador ==
 #dados da unidade e morador
 
@@ -31,17 +32,19 @@ def cad_uni():
       nome = input("Digite seu nome novamente: ")
 
 #CPF
-
     while True:
+      cpf = input("Digite seu CPF: ")
 
+      while cpf in unidades:
+        print("Este CPF já foi cadastrado à uma unidade!")
         cpf = input("Digite seu CPF: ")
 
-        if validar_cpf(cpf):
-           print("CPF válido!")
-           break
+      if validar_cpf(cpf):
+          print("CPF válido!")
+          break
 
-        else:
-           print("CPF inválido! Tente novamente.")
+      else:
+          print("CPF inválido! Tente novamente.")
 
 
     sexo = input("Sexo do responsável(1 - Feminino, 2 - Para masculino): ")
@@ -69,6 +72,7 @@ def cad_uni():
     while not vagas.isdigit():
       print("Insira somente números por favor!")
       vagas = input("Número de vagas extras de garagem: ")
+    vagas = int(vagas)
 
 
     pet = input("Possui pet (1 - Sim, 0 - Não): ")
@@ -89,9 +93,70 @@ def cad_uni():
 
     vencimento = int(vencimento)
 
+
+    #Tabela de Taxa Base Condominial e Vagas Extras
+
+    extra_standart = 50 * vagas
+    standart = 350
+
+    extra_luxo = 70 * vagas
+    luxo = 500
+
+    extra_duplex = 90 * vagas
+    duplex = 700
+
+    extra_cober = 120 * vagas
+    cobertura = 900
+
+    taxa_extra = 0
+
+    if tipoAp == "1":
+      taxa = standart
+      taxa_extra = extra_standart
+
+    if tipoAp == "2":
+      taxa = luxo
+      taxa_extra = extra_luxo
+
+    if tipoAp == "3":
+      taxa = duplex
+      taxa_extra = extra_duplex
+
+    if tipoAp == "4":
+      taxa = cobertura
+      taxa_extra = extra_cober
+
+
+    #Regras de Negócio, Acréscimos e Descontos
+
+# Fundo Reserva
+
+    reserva = (taxa * 5)/100
+
+# Desconto vagas extras
+    if vagas > 2:
+      desc_vagas = taxa_extra - ((taxa_extra * 20)/100)
+    else:
+      desc_vagas = taxa_extra
+
+# Isenção Síndico
+
+    if sindico == "1":
+      taxa = 0
+
+# Idoso
+    if idade >= 65:
+      taxa = taxa - ((taxa * 15)/100)
+
+# Taxa Pet
+    if pet == "1":
+      taxa += 30
+
+    taxa_total = taxa + desc_vagas + reserva
+    
     # Armazenamento dos dados da unidade
 
-    unidades[numAp,bloc] = { 
+    unidades[numAp,bloc] = {
         "numero_apartamento": numAp,
         "bloco": bloc,
         "nome_responsavel": nome,
@@ -102,13 +167,14 @@ def cad_uni():
         "vagas_extras": vagas,
         "possui_pet": pet,
         "sindico": sindico,
-        "dia_vencimento": vencimento
+        "dia_vencimento": vencimento,
+        "Taxa Total": taxa_total
     }
 
     print("Unidade cadastrada com sucesso!")
 
-cad_uni()
-print(unidades)
+
+    print(unidades)
 
 
 #Validador de CPF
@@ -141,18 +207,49 @@ def validar_cpf(cpf):
 
     return True
 
-    
-#Tabela de Taxa Base Condominial e Vagas Extras
 
-#    standart 350 VE 50
-#    luxo 500 VE 70
-#    duplex 700 VE 90
-#    cobertura 900 VE 120
 
-#Regras de Negócio, Acréscimos e Descontos
 
-#    Desconto vag extra >2 = 20% VE
-#    isencao sindico 100% TB
-#    desconto de idoso >65 A 15% TB
-#    taxa pet pet == 1  += 30R$
-#    fundo de reserva 5% TB
+
+# Parte do Menu
+
+def exibir_menu():
+    print("=" * 88)
+    print("CONDOMÍNIO ALTO DA SERRA - SHELL CLI")
+    print("=" * 88)
+    print("1 - Cadastrar Unidade/Morador")
+    print("2 - Editar Unidade")
+    print("3 - Remover Unidade")
+    print("4 - Listagem Geral de Unidades")
+    print("5 - Listagem por Tipo de Imóvel")
+    print("6 - Re latório Estatístico do Condomínio")
+    print("0 - Sair")
+    print("-" * 88)
+
+def main():
+    while True:
+        exibir_menu()
+        opcao = input("Opção desejada [0-6]: ").strip()
+
+        if opcao == '1':
+            print("\n[Interface] Entrou na opção: Cadastrar Unidade/Morador\n")
+            cad_uni()
+        elif opcao == '2':
+            print("\n[Interface] Entrou na opção: Editar Unidade\n")
+        elif opcao == '3':
+            print("\n[Interface] Entrou na opção: Remover Unidade\n")
+        elif opcao == '4':
+            print("\n[Interface] Entrou na opção: Listagem Geral de Unidades\n")
+        elif opcao == '5':
+            print("\n[Interface] Entrou na opção: Listagem por Tipo de Imóvel\n")
+        elif opcao == '6':
+            print("\n[Interface] Entrou na opção: Relatório Estatístico do Condomínio\n")
+        elif opcao == '0':
+            print("\nSaindo do sistema. Até logo!")
+            time.sleep(2)
+            break
+        else:
+            print("\nOpção inválida! Escolha de 0 a 6.\n")
+
+# Executa apenas a interface do shell
+main()
