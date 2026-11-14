@@ -85,21 +85,19 @@ def cad_uni():
       numAp = input("Número do apartamento: ")
 
 
-    bloc = input("Bloco do apartamento(ex.: A,B,C...): ")
-    while not bloc.isalpha() or len(bloc) > 1:
-      print("Insira somente Uma Letra!")
-      bloc = input("Bloco do apartamento(ex.: A,B,C...): ")
-    while bloc.islower():
-      bloc = bloc.upper()
+    bloc = input("Bloco do apartamento(A,B,C): ").strip().upper()
+    while bloc not in ["A", "B", "C"]:
+      print("Insira somente os blocos permitidos: A, B ou C!")
+      bloc = input("Bloco do apartamento(A,B,C): ").strip().upper()
 
     while (numAp + bloc) in unidades:
       print("Essa unidade já está cadastrada!\nInsira outra unidade!")
       numAp = input("Número do apartamento: ")
-      bloc = input("Bloco do apartamento(ex.: A,B,C...): ")
+      bloc = input("Bloco do apartamento(ex.: A,B,C): ").strip().upper()
 
 
     while True:
-      nome = input("Nome do responsável pelo imóvel: ")
+      nome = input("Nome do responsável pelo imóvel: ").strip()
       if not nome.replace(" ", "").isalpha():
         print("Nome inválido! Por favor insira somente letras.")
         continue
@@ -117,11 +115,11 @@ def cad_uni():
 
 #CPF
     while True:
-      cpf = input("Digite seu CPF: ")
+      cpf = input("Digite seu CPF: ").strip()
 
       while any(unidade["Cpf"] == cpf for unidade in unidades.values()):
         print("Este CPF já foi cadastrado à uma unidade!")
-        cpf = input("Digite seu CPF: ")
+        cpf = input("Digite seu CPF: ").strip()
 
       if validar_cpf(cpf):
           print("CPF válido!")
@@ -261,6 +259,224 @@ def cad_uni():
     salvar_dados()
 
 
+# Parte de Editar Unidade
+def editar_unidade():
+    print("\n[EDITAR UNIDADE]")
+    numAp = input("Número do apartamento que deseja editar: ").strip()
+
+    bloc = input("Bloco do apartamento (A, B, C): ").strip().upper()
+    while bloc not in ["A", "B", "C"]:
+        print("Insira somente os blocos permitidos: A, B ou C!")
+        bloc = input("Bloco do apartamento (A, B, C): ").strip().upper()
+
+    chave = numAp + bloc
+
+    if chave not in unidades:
+        print("Unidade não encontrada!")
+        input("\nTecle ENTER para voltar ao menu...")
+        return
+
+    unidade = unidades[chave]
+    print(f"\nEditando a unidade {numAp} - Bloco {bloc} de {unidade['Nome do Responsável']}")
+    print("Caso queira manter o valor atual, basta pressionar ENTER sem digitar nada.\n")
+
+    # 1. Nome do Responsável
+    while True:
+        nome = input(f"Nome do responsável [{unidade['Nome do Responsável']}]: ").strip()
+        if not nome:
+            nome = unidade['Nome do Responsável']
+            break
+        if not nome.replace(" ", "").isalpha():
+            print("Nome inválido! Por favor insira somente letras.")
+            continue
+        if len(nome) > 80:
+            print("Por favor insira somente as letras necessárias!")
+            continue
+        nome = nome.lower()
+        if not validar_nome(nome):
+            print("Nome inválido! Evite usar mais de duas letras repetidas em sequência.")
+            continue
+        nome = nome.title()
+        break
+
+    # 2. CPF
+    while True:
+        cpf = input(f"CPF [{unidade['Cpf']}]: ").strip()
+        if not cpf:
+            cpf = unidade['Cpf']
+            break
+        if any(u["Cpf"] == cpf and k != chave for k, u in unidades.items()):
+            print("Este CPF já foi cadastrado em outra unidade!")
+            continue
+        if validar_cpf(cpf):
+            print("CPF válido!")
+            break
+        else:
+            print("CPF inválido! Tente novamente.")
+
+    # 3. Sexo
+    sexo_input = input(f"Sexo (1 - Feminino, 2 - Masculino) [{unidade['Sexo']}]: ")
+    if not sexo_input:
+        sexo = unidade['Sexo']
+    else:
+        while sexo_input not in ["1", "2"]:
+            print("Insira um dado válido!")
+            sexo_input = input("Sexo (1 - Feminino, 2 - Masculino): ")
+        sexo = int(sexo_input)
+
+    # 4. Idade
+    idade_input = input(f"Idade [{unidade['Idade']}]: ")
+    if not idade_input:
+        idade = unidade['Idade']
+    else:
+        while not idade_input.isdigit() or int(idade_input) < 18 or int(idade_input) > 120:
+            print("Insira uma idade válida!")
+            idade_input = input("Idade do responsável (Entre 18 e 120): ")
+        idade = int(idade_input)
+
+    # 5. Tipo de Unidade
+    print("Tipos de Apartamento:\n1- Standard (R$ 350)\n2- Luxo (R$ 500)\n3- Duplex (R$ 700)\n4- Cobertura (R$ 900)")
+    tipo_input = input(f"Tipo de unidade [{unidade['Tipo de Unidade']}]: ")
+    if not tipo_input:
+        tipoAp = unidade['Tipo de Unidade']
+    else:
+        while tipo_input not in ["1", "2", "3", "4"]:
+            print("Insira um valor válido!")
+            tipo_input = input("Tipo de unidade: ").strip()
+        tipoAp = int(tipo_input)
+
+    # 6. Vagas Extras
+    vagas_input = input(f"Vagas extras [{unidade['Vagas Extras']}]: ")
+    if not vagas_input:
+        vagas = unidade['Vagas Extras']
+    else:
+        while True:
+            if not vagas_input.isdigit():
+                print("Insira somente números por favor!")
+            elif int(vagas_input) > 5:
+                print("Você pediu por vagas demais! (Máximo de 5)")
+            else:
+                break
+            vagas_input = input("Vagas extras (Máximo de 5): ")
+        vagas = int(vagas_input)
+
+    # 7. Possui Pet
+    pet_input = input(f"Possui pet (1 - Sim, 0 - Não) [{unidade['Possui Pet']}]: ")
+    if not pet_input:
+        pet = unidade['Possui Pet']
+    else:
+        while pet_input not in ["0", "1"]:
+            print("Insira um valor válido!")
+            pet_input = input("Possui pet (1 - Sim, 0 - Não): ")
+        pet = int(pet_input)
+
+    # 8. Síndico
+    sindico_input = input(f"Exerce a função de Síndico (1 - Sim, 0 - Não) [{unidade['Sindico']}]: ")
+    if not sindico_input:
+        sindico = unidade['Sindico']
+    else:
+        while sindico_input not in ["0", "1"]:
+            print("Insira um valor válido!")
+            sindico_input = input("Exerce a função de Síndico (1 - Sim, 0 - Não): ")
+        sindico = int(sindico_input)
+
+    # 9. Vencimento
+    venc_input = input(f"Data de vencimento (Entre 1 e 28) [{unidade['Dia de Vencimento']}]: ")
+    if not venc_input:
+        vencimento = unidade['Dia de Vencimento']
+    else:
+        while not venc_input.isdigit() or int(venc_input) < 1 or int(venc_input) > 28:
+            print("Insira uma data válida!")
+            venc_input = input("Data de vencimento (Entre 1 e 28): ")
+        vencimento = str(venc_input)
+
+    # Recalculando Taxas
+    taxas_valores = {
+        1: {"base": 350, "vaga": 50},
+        2: {"base": 500, "vaga": 70},
+        3: {"base": 700, "vaga": 90},
+        4: {"base": 900, "vaga": 120}
+    }
+
+    dados_tipo = taxas_valores[tipoAp]
+    taxa_base = dados_tipo["base"]
+    valor_vaga_unitaria = dados_tipo["vaga"]
+    taxa_extra = valor_vaga_unitaria * vagas
+
+    reserva = (taxa_base * 5) / 100
+
+    if vagas > 2:
+        desc_vagas = taxa_extra * 0.80
+    else:
+        desc_vagas = taxa_extra
+
+    if sindico == 1:
+        taxa_base = 0
+
+    if idade >= 65 and sindico != 1:
+        taxa_base = taxa_base * 0.85
+
+    if pet == 1:
+        taxa_base += 30
+
+    taxa_total = taxa_base + desc_vagas + reserva
+
+    # Grava as modificações
+    unidades[chave] = {
+        "Número do Apartamento": int(numAp),
+        "Bloco": bloc,
+        "Nome do Responsável": nome,
+        "Cpf": cpf,
+        "Sexo": sexo,
+        "Idade": idade,
+        "Tipo de Unidade": tipoAp,
+        "Vagas Extras": vagas,
+        "Possui Pet": pet,
+        "Sindico": sindico,
+        "Dia de Vencimento": str(vencimento),
+        "Taxa Total": taxa_total
+    }
+
+    print("Unidade editada com sucesso!")
+    salvar_dados()
+    input("\nTecle ENTER para voltar ao menu...")
+
+
+# Função para Remover Unidade
+def remover_unidade():
+    print("\n[REMOVER UNIDADE]")
+    numAp = input("Número do apartamento que deseja remover: ")
+
+    bloc = input("Bloco do apartamento (A, B, C): ").upper()
+    while bloc not in ["A", "B", "C"]:
+        print("Insira somente os blocos permitidos: A, B ou C!")
+        bloc = input("Bloco do apartamento (A, B, C): ").upper()
+
+    chave = numAp + bloc
+
+    if chave not in unidades:
+        print("Unidade não encontrada!")
+        input("\nTecle ENTER para voltar ao menu...")
+        return
+
+    unidade = unidades[chave]
+    print(f"\nUnidade Encontrada:")
+    print(f"Apartamento: {unidade['Número do Apartamento']} - Bloco: {unidade['Bloco']}")
+    print(f"Responsável: {unidade['Nome do Responsável']}")
+    print(f"CPF: {unidade['Cpf']}")
+
+    confirmacao = input("\nTem certeza de que deseja remover esta unidade? (S - Sim, N - Não): ").upper()
+    if confirmacao == 'S':
+        del unidades[chave]
+        print("\nUnidade removida com sucesso!")
+        salvar_dados()
+    else:
+        print("\nOperação de remoção cancelada pelo usuário.")
+
+    input("\nTecle ENTER para voltar ao menu...")
+
+
+
 
 
 
@@ -291,8 +507,10 @@ def main():
             cad_uni()
         elif opcao == '2':
             print("\n[Interface] Entrou na opção: Editar Unidade\n")
+            editar_unidade()
         elif opcao == '3':
             print("\n[Interface] Entrou na opção: Remover Unidade\n")
+            remover_unidade()
         elif opcao == '4':
             print("\n[Interface] Entrou na opção: Listagem Geral de Unidades\n")
             listar_geral()
@@ -341,13 +559,13 @@ def ler_unidades():
         if isinstance(unidade_padronizada.get("Tipo de Unidade"), str):
             map_tipos = {"Standard": 1, "Standart": 1, "Luxo": 2, "Duplex": 3, "Cobertura": 4}
             unidade_padronizada["Tipo de Unidade"] = map_tipos.get(unidade_padronizada["Tipo de Unidade"], 1)
-        
+
         unidade_padronizada["Vagas Extras"] = int(unidade_padronizada.get("Vagas Extras", 0))
         unidade_padronizada["Idade"] = int(unidade_padronizada.get("Idade", 0))
         unidade_padronizada["Possui Pet"] = int(unidade_padronizada.get("Possui Pet", 0))
         unidade_padronizada["Sindico"] = int(unidade_padronizada.get("Sindico", 0))
         lista_unidades.append(unidade_padronizada)
-        
+
     lista_unidades.sort(key=lambda x: (x["Bloco"], x["Número do Apartamento"]))
     return lista_unidades
 
@@ -357,7 +575,7 @@ def calcular_taxa(unidade):
     valor_vaga = dados["vaga"]
 
     # 1. Vagas Extras
-    total_vagas = unidade["Vagas Extras"] * valor_vaga
+    total_vagas = grid_vagas = unidade["Vagas Extras"] * valor_vaga
     if unidade["Vagas Extras"] > 2:
         total_vagas = total_vagas * 0.80  # 20% de desconto só nas vagas
 
@@ -431,14 +649,6 @@ def listar_por_tipo():
     else:
         mostrar_tabela(filtradas, f"LISTAGEM POR TIPO DE IMÓVEL - {TAXAS[tipo_escolhido]['nome'].upper()}")
     input("\nTecle ENTER para voltar ao menu...")
-
-
-
-
-
-
-
-
 
 
 # Executa apenas a interface do shell
