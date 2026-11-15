@@ -80,7 +80,7 @@ def cad_uni():
     while not numAp.isdigit() or len(numAp) > 4:
       print("Insira números válidos!")
       numAp = input("Número do apartamento: ")
-    while int(numAp) < 0:
+    while int(numAp) < 1:
       print("Insira um número diferente de Zero: ")
       numAp = input("Número do apartamento: ")
 
