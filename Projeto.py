@@ -95,7 +95,6 @@ def cad_uni():
       numAp = input("Número do apartamento: ")
       bloc = input("Bloco do apartamento(ex.: A,B,C): ").strip().upper()
 
-
     while True:
       nome = input("Nome do responsável pelo imóvel: ").strip()
       if not nome.replace(" ", "").isalpha():
@@ -519,6 +518,7 @@ def main():
             listar_por_tipo()
         elif opcao == '6':
             print("\n[Interface] Entrou na opção: Relatório Estatístico do Condomínio\n")
+            relatorio_estatistico()
         elif opcao == '0':
             print("\nSaindo do sistema. Até logo!")
             time.sleep(2)
@@ -575,7 +575,7 @@ def calcular_taxa(unidade):
     valor_vaga = dados["vaga"]
 
     # 1. Vagas Extras
-    total_vagas = grid_vagas = unidade["Vagas Extras"] * valor_vaga
+    total_vagas = unidade["Vagas Extras"] * valor_vaga
     if unidade["Vagas Extras"] > 2:
         total_vagas = total_vagas * 0.80  # 20% de desconto só nas vagas
 
@@ -621,7 +621,7 @@ def listar_geral():
         print("Nenhuma unidade cadastrada.")
     else:
         mostrar_tabela(unidades, "LISTAGEM GERAL DE UNIDADES DE CONDOMÍNIO")
-    input("\nTecle ENTER para voltar ao menu...")
+    input("\nTecle ENTER para voltar ao menu...\n")
 
 def listar_por_tipo():
     print("\n[LISTAGEM POR TIPO DE IMÓVEL]")
@@ -633,12 +633,12 @@ def listar_por_tipo():
         tipo_escolhido = int(input("Digite o tipo desejado [1-4]: "))
     except:
         print("Tipo inválido!")
-        input("\nTecle ENTER para voltar ao menu...")
+        input("\nTecle ENTER para voltar ao menu...\n")
         return
 
     if tipo_escolhido not in TAXAS:
         print("Tipo inválido!")
-        input("\nTecle ENTER para voltar ao menu...")
+        input("\nTecle ENTER para voltar ao menu...\n")
         return
 
     unidades = ler_unidades()
@@ -648,8 +648,46 @@ def listar_por_tipo():
         print(f"\nNenhuma unidade do tipo {TAXAS[tipo_escolhido]['nome']} encontrada.")
     else:
         mostrar_tabela(filtradas, f"LISTAGEM POR TIPO DE IMÓVEL - {TAXAS[tipo_escolhido]['nome'].upper()}")
-    input("\nTecle ENTER para voltar ao menu...")
+    input("\nTecle ENTER para voltar ao menu...\n")
 
 
+
+
+# Parte do Relatório Estatístico
+# Gustavo
+def relatorio_estatistico():
+    unidades_lista = ler_unidades()
+    total_unidades = len(unidades_lista)
+
+    # 1. Percentual de unidades com animais de estimação (Pets)
+    if total_unidades > 0:
+        total_pets = sum(1 for u in unidades_lista if u["Possui Pet"] == 1)
+        perc_pets = (total_pets / total_unidades) * 100
+    else:
+        perc_pets = 0.0
+
+    # 2. Quantidade total de vagas de garagem extras alocadas
+    total_vagas_extras = sum(u["Vagas Extras"] for u in unidades_lista)
+
+    # 3. Média do valor da taxa condominial das Coberturas (4) e Duplex (3)
+    unidades_cob_dup = [u for u in unidades_lista if u["Tipo de Unidade"] in [3, 4]]
+    if len(unidades_cob_dup) > 0:
+        soma_taxas = sum(calcular_taxa(u) for u in unidades_cob_dup)
+        media_cob_dup = soma_taxas / len(unidades_cob_dup)
+    else:
+        media_cob_dup = 0.0
+
+    # 4. Arrecadação total mensal (Taxas + Fundo de Reserva)
+    arrecadacao_total = sum(calcular_taxa(u) for u in unidades_lista)
+
+    # Exibição seguindo exatamente o padrão da imagem
+    print("\n" + "=" * 20 + " RELATÓRIO ESTATÍSTICO " + "=" * 20)
+    print(f"• Percentual de unidades com animais de estimação (Pets): {perc_pets:.2f}%")
+    print(f"• Quantidade total de vagas de garagem extras alocadas: {total_vagas_extras} vagas")
+    print(f"• Média do valor da taxa condominial das Coberturas e Duplex: R$ {media_cob_dup:,.2f}")
+    print(f"• Arrecadação total mensal (Taxas + Fundo de Reserva): R$ {arrecadacao_total:,.2f}")
+    print("-" * 63)
+
+    input("tecle ENTER para voltar ao menu principal...\n")
 # Executa apenas a interface do shell
 main()
