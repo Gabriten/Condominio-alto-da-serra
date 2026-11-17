@@ -34,7 +34,7 @@ def salvar_dados():
             #Converte o dicinário Python em uma string formatada em JSON
             #ensure_ascii Garante que os acentos e caracteres especiais sejam salvos corretamenta
             #indent organiza o arquivo visualmente, ficando mais fácil de ler
-        print("Dados salvos com sucesso no arquivo!")
+        print("Dados salvos com sucesso no arquivo!\n")
     except Exception as e:
     #Salva o erro como a variável e
         print(f"Erro ao salvar dados no arquivo: {e}")
@@ -496,9 +496,26 @@ def editar_unidade():
         "Taxa Total": taxa_total
     }
 
-    print("Unidade editada com sucesso!")
+
+    tipos_nome = {1: "Standard - R$350.00", 2: "Luxo - R$500.00", 3: "Duplex - R$700.00", 4: "Cobertura - R$900.00"}
+
+    print("\n" + "=" * 50)
+    print("          EDIÇÃO REALIZADA COM SUCESSO!")
+    print("=" * 50)
+    print(f"• Apartamento: {numAp} - Bloco: {bloc}")
+    print(f"• Responsável: {nome}")
+    print(f"• CPF: {cpf}")
+    print(f"• Sexo: {'Feminino' if sexo == 1 else 'Masculino'}")
+    print(f"• Idade: {idade} anos")
+    print(f"• Tipo de Unidade: {tipos_nome.get(tipoAp, 'Tipo')}")
+    print(f"• Vagas Extras de Garagem: {vagas}")
+    print(f"• Possui Pet: {'Sim' if pet == 1 else 'Não'}")
+    print(f"• Síndico: {'Sim' if sindico == 1 else 'Não'}")
+    print(f"• Dia de Vencimento da Taxa: {vencimento}")
+    print(f"• Taxa Total Calculada: R$ {taxa_total:.2f}")
+    print("=" * 50 + "\n")
     salvar_dados()
-    input("\nTecle ENTER para voltar ao menu...")
+    input("\nTecle ENTER para voltar ao menu...\n")
 
 
 # Função para Remover Unidade
@@ -515,7 +532,7 @@ def remover_unidade():
 
     if chave not in unidades:
         print("Unidade não encontrada!")
-        input("\nTecle ENTER para voltar ao menu...")
+        input("\nTecle ENTER para voltar ao menu...\n")
         return
 
     unidade = unidades[chave]
@@ -532,7 +549,7 @@ def remover_unidade():
     else:
         print("\nOperação de remoção cancelada pelo usuário.")
 
-    input("\nTecle ENTER para voltar ao menu...")
+    input("\nTecle ENTER para voltar ao menu...\n")
 
 
 
