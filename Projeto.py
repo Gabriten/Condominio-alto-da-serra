@@ -11,28 +11,42 @@ ARQUIVO = "condominio.txt"
 
 # Funções para persistência em arquivo TXT (formato JSON)
 def carregar_dados():
-    # Se o arquivo não existir, retorna um dicionário vazio
     if os.path.exists(ARQUIVO):
+    #Procura se o ARQUIVO existe
         try:
+        #Tenta executar o código abaixo
             with open(ARQUIVO, "r", encoding="utf-8") as f:
+            #Abre o arquivo como leitor(r) e o UTF-8 suporta acentos
                 return json.load(f)
+                #Converte o texto em um dicionário Python
         except Exception:
+        #Se o código der erro, ele não crasha o programa
             return {}
+            #Ao invés disso retorna uma lista vazia
     return {}
+    # Se o arquivo não existir, retorna um dicionário vazio
 
 def salvar_dados():
     try:
         with open(ARQUIVO, "w", encoding="utf-8") as f:
+        #Abre o ARQUIVO como escritor(w)
             json.dump(unidades, f, ensure_ascii=False, indent=4)
+            #Converte o dicinário Python em uma string formatada em JSON
+            #ensure_ascii Garante que os acentos e caracteres especiais sejam salvos corretamenta
+            #indent organiza o arquivo visualmente, ficando mais fácil de ler
         print("Dados salvos com sucesso no arquivo!")
     except Exception as e:
+    #Salva o erro como a variável e
         print(f"Erro ao salvar dados no arquivo: {e}")
+        #Imprime o erro que ocorreu
 
 
 #Validador de CPF
 def validar_cpf(cpf):
 
     cpf = cpf.strip().replace(".", "").replace("-", "")
+    #.strip remove espaços vazios antes e depois da string
+    #.replace repõe "." e "-" por espaço vazio
 
     # Verifica se possui 11 dígitos
     if not cpf.isdigit() or len(cpf) != 11:
@@ -48,13 +62,22 @@ def validar_cpf(cpf):
         soma = 0
 
         for i in range(tamanho):
+        #para I no range do tamanho (9 ou 10)
             soma += int(cpf[i]) * (tamanho + 1 - i)
+            #adiciona a variável soma, o inteiro do I no CPF * o tamanho(9 ou 10) + 1 - I
+            #faz isso com todos os I em CPF
 
         resto = (soma * 10) % 11
+        #Resto vai definir qual o digito verificador
 
         digito = 0 if resto == 10 else resto
+        #Se o resto for = 10 o digito é 0
+        #Se não o digito é igual o resto
+        #Aqui surge a variável digito
+
 
         if digito != int(cpf[tamanho]):
+        #Se a var(tamanho(9 e 10)) forem diferentes dos digitos verificadores, então o CPF é inválido
             return False
 
     return True
@@ -63,8 +86,15 @@ def validar_cpf(cpf):
 
 def validar_nome(nome):
   repetidos = re.compile(r"(\w)\1{2,}")
+  #re.compile: compila um padrão de busca usando expressões da Biblioteca re do python
+  #\w Cria um grupo de captura para qualquer caractere alfanumérico
+  #\1 Caractere que foi capturado
+  #2, Especifica o tanto que esse caractere tem que se repetir (2x)
+
   if repetidos.search(nome):
+  #Procura em qualquer parte do código por esse padrão inválido
     return False
+    #Se ele encontrar o nome será inválido
   return True
 
 #  == Cadastro de Morador ==
@@ -279,6 +309,8 @@ def editar_unidade():
     print(f"\nEditando a unidade {numAp} - Bloco {bloc} de {unidade['Nome do Responsável']}")
     print("Caso queira manter o valor atual, basta pressionar ENTER sem digitar nada.\n")
 
+    nome_alterado = False
+
     # 1. Nome do Responsável
     while True:
         nome = input(f"Nome do responsável [{unidade['Nome do Responsável']}]: ").strip()
@@ -296,14 +328,24 @@ def editar_unidade():
             print("Nome inválido! Evite usar mais de duas letras repetidas em sequência.")
             continue
         nome = nome.title()
+        if nome != unidade['Nome do Responsável']:
+            nome_alterado = True
         break
 
     # 2. CPF
     while True:
-        cpf = input(f"CPF [{unidade['Cpf']}]: ").strip()
-        if not cpf:
-            cpf = unidade['Cpf']
-            break
+        if nome_alterado:
+            print("Como o Nome do responsável foi alterado, você precisa Obrigatoriamente fornecer um novo CPF!")
+            cpf = input("Novo CPF: ").strip()
+            if not cpf:
+                print("O CPF não pode ficar em branco quando o nome é alterado!")
+                continue
+        else:
+            cpf = input(f"CPF [{unidade['Cpf']}]: ").strip()
+            if not cpf:
+                cpf = unidade['Cpf']
+                break
+
         if any(u["Cpf"] == cpf and k != chave for k, u in unidades.items()):
             print("Este CPF já foi cadastrado em outra unidade!")
             continue
