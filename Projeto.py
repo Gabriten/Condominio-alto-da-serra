@@ -284,7 +284,25 @@ def cad_uni():
         "Taxa Total": taxa_total
     }
 
-    print("Unidade cadastrada com sucesso!")
+    # Mapeamento do tipo de unidade para exibição de texto amigável
+    tipos_nome = {1: "Standard - R$350.00", 2: "Luxo - R$500.00", 3: "Duplex - R$700.00", 4: "Cobertura - R$900.00"}
+
+    print("\n" + "=" * 50)
+    print("          CADASTRO REALIZADO COM SUCESSO!")
+    print("=" * 50)
+    print(f"• Apartamento: {numAp} - Bloco: {bloc}")
+    print(f"• Responsável: {nome}")
+    print(f"• CPF: {cpf}")
+    print(f"• Sexo: {'Feminino' if sexo == 1 else 'Masculino'}")
+    print(f"• Idade: {idade} anos")
+    print(f"• Tipo de Unidade: {tipos_nome.get(tipoAp, 'Tipo')}")
+    print(f"• Vagas Extras de Garagem: {vagas}")
+    print(f"• Possui Pet: {'Sim' if pet == 1 else 'Não'}")
+    print(f"• Síndico: {'Sim' if sindico == 1 else 'Não'}")
+    print(f"• Dia de Vencimento da Taxa: {vencimento}")
+    print(f"• Taxa Total Calculada: R$ {taxa_total:.2f}")
+    print("=" * 50 + "\n")
+
     salvar_dados()
 
 
