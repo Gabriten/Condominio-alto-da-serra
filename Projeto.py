@@ -1,3 +1,5 @@
+#Modularizar o arquivo
+
 #Parte do cadastro
 #Gabriel
 
@@ -621,10 +623,10 @@ def main():
 
 # Tabela de valores do PDF
 TAXAS = {
-    1: {"nome": "Standard", "base": 350.00, "vaga": 50.00},
-    2: {"nome": "Luxo", "base": 500.00, "vaga": 70.00},
-    3: {"nome": "Duplex", "base": 700.00, "vaga": 90.00},
-    4: {"nome": "Cobertura", "base": 900.00, "vaga": 120.00},
+    1: {"nome": "Standard  - R$350", "base": 350.00, "vaga": 50.00},
+    2: {"nome": "Luxo      - R$500", "base": 500.00, "vaga": 70.00},
+    3: {"nome": "Duplex    - R$700", "base": 700.00, "vaga": 90.00},
+    4: {"nome": "Cobertura - R$900", "base": 900.00, "vaga": 120.00},
 }
 
 def ler_unidades():
@@ -677,9 +679,9 @@ def calcular_taxa(unidade):
 
 def mostrar_tabela(unidades, titulo):
     print(f"\n[{titulo}]")
-    print("=" * 115)
-    print(f"| {'Apto':<6} | {'Bloco':<5} | {'Nome do Responsável':<25} | {'Idade':<5} | {'Tipo':<10} | {'Vagas Ex.':<9} | {'Pet':<3} | {'Taxa Total':<11} | {'Vencimento':<10} |")
-    print("-" * 115)
+    print("=" * 121)
+    print(f"| {'Apto':<6} | {'Bloco':<5} | {'Nome do Responsável':<25} | {'Idade':<5} | {'Tipo do Apto.':<18} | {'Vagas Ex.':<9} | {'Pet':<3} | {'Taxa Total':<11} | {'Vencimento':<10} |")
+    print("-" * 121)
     for u in unidades:
         taxa = calcular_taxa(u)
         nome_tipo = TAXAS[u["Tipo de Unidade"]]["nome"]
@@ -688,8 +690,8 @@ def mostrar_tabela(unidades, titulo):
         # Se no arquivo estiver só o dia "10", mostra como 10/11/2026 igual o PDF
         if "/" not in venc:
             venc = f" {venc}/11/2026"
-        print(f"| {u['Número do Apartamento']:<6} | {u['Bloco']:<5} | {u['Nome do Responsável']:<25} | {u['Idade']:<5} | {nome_tipo:<10} | {u['Vagas Extras']:<9} | {pet_txt:<3} | R$ {taxa:<7.2f} | {venc:<10} |")
-    print("=" * 115)
+        print(f"| {u['Número do Apartamento']:<6} | {u['Bloco']:<5} | {u['Nome do Responsável'][:25]:<25} | {u['Idade']:<5} | {nome_tipo:<18} | {u['Vagas Extras']:<9} | {pet_txt:<3} | R$ {taxa:<7.2f} | {venc:<10} |")
+    print("=" * 121)
 
 def listar_geral():
     unidades = ler_unidades()
